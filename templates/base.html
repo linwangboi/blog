@@ -27,7 +27,7 @@
           <div class="col-4">
             <form action="{% url 'search' %}" method="GET">
               <div class="input-group">
-                <input type="text" class="form-control" name="keyword" placeholder="Enter search term..."  aria-label="Enter search term..." aria-describedby="button-search"  />
+                <input type="text" class="form-control" name="keyword"  value="{{ keyword }}"placeholder="Enter search term..."  aria-label="Enter search term..." aria-describedby="button-search"  />
                 <button type='submit' class="btn btn-warning" id="button-search">Go!</button>
               </div>
             </form>

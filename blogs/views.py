@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.db.models import Q
 
 from .models import Blog, Category
 
@@ -29,4 +30,15 @@ def blogs(request, slug):
 
 
 def search(request):
-    return render(request, "search.html")
+    keyword = request.GET.get("keyword")
+
+    return render(
+        request,
+        "search.html",
+        {
+            "blogs": Blog.objects.filter(
+                Q(title__icontains=keyword) | Q(blog_body__icontains=keyword)
+            ),
+            'keyword': keyword or '',
+        },
+    )
