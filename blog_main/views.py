@@ -49,9 +49,14 @@ def login(request):
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
             auth.login(request, form.get_user())  # 👈 One line, one source of truth
-            return redirect("home")
+            return redirect("dashboard")
         print(form.errors)  # Move outside if-block
     else:
         form = AuthenticationForm()
 
     return render(request, "login.html", {"form": form})
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect("home")
