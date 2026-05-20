@@ -16,3 +16,8 @@ def dashboard(request):
             "category_count": category_count,
         },
     )
+
+
+@login_required(login_url="login")
+def categories(request):
+    return render(request, "dashboard/categories.html")
