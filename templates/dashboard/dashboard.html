@@ -3,15 +3,9 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-3">
-        <div class="nav flex-column">
-            <a href="#" class="nav-link text-dark bg-warning">Dashboard</a>
-            <a href="#" class="nav-link text-dark">Categories</a>
-            <a href="#" class="nav-link text-dark">Posts</a>
-            <a href="#" class="nav-link text-dark">Logout</a>
-        </div>
-    </div>
+    {% include 'dashboard/sidebar.html' %}
     <div class="col-md-9">
+        <div class="text-muted mb-3">Logged in as <b>{{user}}</b></div>
         <div class="row">
             <div class="col">
                 <div class="card bolder-default mb-3"">

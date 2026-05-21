@@ -1,4 +1,3 @@
-
 from assignments.models import SocialLink
 
 from .models import Category
@@ -6,8 +5,9 @@ from .models import Category
 
 def get_categories(request):
     return dict(
-        categories=Category.objects.all(),
+        categories=Category.objects.all().order_by("-created_at"),
     )
+
 
 def get_social_links(request):
     return dict(
