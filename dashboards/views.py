@@ -3,7 +3,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from blogs.models import Blog, Category
 from django.contrib.auth.decorators import login_required
 
-from .forms import CategoryForm
+from .forms import BlogPostForm, CategoryForm
+from django.template.defaultfilters import slugify
 
 
 @login_required(login_url="login")
@@ -62,3 +63,58 @@ def delete_category(request, pk):
     cat = get_object_or_404(Category, pk=pk)
     cat.delete()
     return redirect("categories")
+
+
+def posts(request):
+    posts = Blog.objects.all().order_by("-created_at")
+
+    return render(request, "dashboard/posts.html", {"posts": posts})
+
+
+def add_post(request):
+    if request.method == "POST":
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            post.slug = f"{slugify(post.title)}-{post.id}"  #!!!!
+            post.save()
+            return redirect("posts")
+
+    form = BlogPostForm()
+    return render(
+        request,
+        "dashboard/add_post.html",
+        {
+            "form": form,
+        },
+    )
+
+
+def edit_post(request, pk):
+    post = get_object_or_404(Blog, pk=pk)
+    if request.method == "POST":
+        form = BlogPostForm(data=request.POST, files=request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save()
+            if post.title != form.cleaned_data["title"]:
+                post.slug = f"{slugify(post.title)-{post.id}}"
+                post.save()
+            return redirect("posts")
+
+    form = BlogPostForm(instance=post)
+    return render(
+        request,
+        "dashboard/edit_post.html",
+        {
+            "form": form,
+            "post": post,
+        },
+    )
+
+
+def delete_post(request, pk):
+    post = get_object_or_404(Blog, pk=pk)
+    post.delete()
+    return redirect("posts")
