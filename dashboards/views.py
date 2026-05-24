@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, redirect, render
 
 from blogs.models import Blog, Category
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
-from .forms import AddUserForm, BlogPostForm, CategoryForm
+from .forms import AddUserForm, BlogPostForm, CategoryForm, EditUserForm
 from django.template.defaultfilters import slugify
 from django.contrib.auth import get_user_model
 
@@ -28,6 +28,7 @@ def categories(request):
 
 
 @login_required(login_url="login")
+@permission_required("blogs.add_category", raise_exception=True)
 def add_category(request):
     if request.method == "POST":
         form = CategoryForm(request.POST)
@@ -44,6 +45,8 @@ def add_category(request):
     )
 
 
+@login_required(login_url="login")
+@permission_required("blogs.change_category", raise_exception=True)
 def edit_category(request, pk):
     cat = get_object_or_404(Category, pk=pk)
     if request.method == "GET":
@@ -60,6 +63,8 @@ def edit_category(request, pk):
     )
 
 
+@login_required(login_url="login")
+@permission_required("blogs.delete_category", raise_exception=True)
 def delete_category(request, pk):
     cat = get_object_or_404(Category, pk=pk)
     cat.delete()
@@ -72,6 +77,8 @@ def posts(request):
     return render(request, "dashboard/posts.html", {"posts": posts})
 
 
+@login_required(login_url="login")
+@permission_required("blogs.add_blog", raise_exception=True)
 def add_post(request):
     if request.method == "POST":
         form = BlogPostForm(request.POST, request.FILES)
@@ -93,6 +100,8 @@ def add_post(request):
     )
 
 
+@login_required(login_url="login")
+@permission_required("blogs.change_blog", raise_exception=True)
 def edit_post(request, pk):
     post = get_object_or_404(Blog, pk=pk)
     if request.method == "POST":
@@ -115,12 +124,16 @@ def edit_post(request, pk):
     )
 
 
+@login_required(login_url="login")
+@permission_required("blogs.delete_blog", raise_exception=True)
 def delete_post(request, pk):
     post = get_object_or_404(Blog, pk=pk)
     post.delete()
     return redirect("posts")
 
 
+@login_required(login_url="login")
+@permission_required("auth.view_user", raise_exception=True)
 def users(request):
     users = get_user_model().objects.all()
     return render(
@@ -132,6 +145,8 @@ def users(request):
     )
 
 
+@login_required(login_url="login")
+@permission_required("auth.add_user", raise_exception=True)
 def add_user(request):
     if request.method == "POST":
         form = AddUserForm(request.POST)
@@ -149,18 +164,22 @@ def add_user(request):
     )
 
 
+@login_required(login_url="login")
+@permission_required("auth.change_user", raise_exception=True)
 def edit_user(request, pk):
     user = get_object_or_404(get_user_model(), pk=pk)
     if request.method == "POST":
-        form = AddUserForm(instance=user, data=request.POST)
+        form = EditUserForm(instance=user, data=request.POST)
         if form.is_valid():
             form.save()
             return redirect("users")
         print(form.errors)
-    form = AddUserForm(instance=user)
+    form = EditUserForm(instance=user)
     return render(request, "dashboard/edit_user.html", {"user": user, "form": form})
 
 
+@login_required(login_url="login")
+@permission_required("auth.delete_user", raise_exception=True)
 def delete_user(request, pk):
     user = get_object_or_404(get_user_model(), pk=pk)
     user.delete()
