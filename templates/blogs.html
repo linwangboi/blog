@@ -44,7 +44,7 @@
                     <br>
                     <div class="form-group">
                         {% if user.is_authenticated %}
-                        <form action="" method="POST">
+                        <form action="{% url 'add_comment' single_blog.slug %}" method="POST">
                             {% csrf_token %}
                             <div class="form-group">
                                 <textarea name="comment" class="form-control" placeholder="Write your comment"></textarea>

@@ -28,6 +28,7 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("category/", include("blogs.urls")),
     path("blogs/<slug:slug>/", BlogsView.blogs, name="blogs"),
+    path("blogs/<slug:slug>/comments/", BlogsView.add_comment, name="add_comment"),
     path("blogs/search/", BlogsView.search, name="search"),
     path("register/", views.register, name="register"),
     path("login/", views.login, name="login"),
